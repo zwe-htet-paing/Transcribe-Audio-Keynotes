@@ -25,8 +25,6 @@ class AudioTranscriber:
             ],
             outputs=[
                 gr.Textbox(label="Transcription", show_copy_button=True),
-                # download the transcript
-                gr.File(label="Download Transcript"),
             ],
             allow_flagging="never",
             title=self.title,
