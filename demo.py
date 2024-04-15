@@ -1,3 +1,5 @@
+"""_summary_
+
 data = {
         "Audio": "/hom/kasdfadf/test.mp4",
         "Language": "english",
@@ -12,3 +14,10 @@ keynote_data = {
         "KeyNotes": "Hello, how are you doing today?",
         "task": "Note",
     }
+"""
+
+from src.app.app import AudioTranscriber
+
+if __name__ == "__main__":
+    transcriber = AudioTranscriber()
+    transcriber.launch()
