@@ -1,19 +1,32 @@
 import gradio as gr
+from src.api.diarize import ASRDiarizationPipeline
 
 
 class AudioTranscriber:
     def __init__(self):
         self.title = "Transribe Audio KeyNotes ⚡️"
         self.description = """
-        The system can transcribe audio to text and extract keynotes from the audio. The system uses the Whisper large-v2 model by OpenAI and speaker diarization model by pyannote.
+        The system can transcribe audio to text and extract keynotes from the audio. The system uses the Whisper medium model by OpenAI and speaker diarization model by pyannote.
         """
-        self.article = "Whisper large-v2 model by OpenAI. Speaker diarization model by pyannote. 🚀"
+        self.article = "Whisper medium model by OpenAI. Speaker diarization model by pyannote. 🚀"
+        self.diarizer = ASRDiarizationPipeline.from_pretrained(device="cuda")
+
+    @staticmethod
+    def format_dialogue(dialogue):
+        formatted_dialogue = ""
+        for utterance in dialogue:
+            speaker = utterance['speaker']
+            text = utterance['text']
+            formatted_dialogue += f"{speaker}: {text}\n"
+        return formatted_dialogue.strip()
 
     def transcribe(self, audio, task, group_by_speaker):
         if audio is None:
             return "No audio detected. Please try again."
         if task == "transcribe":
-            return "Transcription not available for this task. Please select 'transcribe' or 'keynote'."
+            result = self.diarizer(audio, group_by_speaker=group_by_speaker)
+            dialogue = self.format_dialogue(result) 
+            return dialogue
 
     def create_interface(self, source, label):
         return gr.Interface(
