@@ -31,8 +31,8 @@ __pycache__/
 .venv
 
 # Audio files
-*.mp3
-*.wav
+# *.mp3
+# *.wav
 
 # Test dir
 /test
