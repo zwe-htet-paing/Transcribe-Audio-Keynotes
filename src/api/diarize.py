@@ -1,3 +1,9 @@
+"""
+# Huggingface models
+- https://huggingface.co/openai/whisper-medium
+- https://huggingface.co/pyannote/speaker-diarization-3.0
+"""
+
 from typing import List, Optional, Union
 
 import numpy as np

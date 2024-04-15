@@ -1,15 +1,18 @@
 import gradio as gr
 from src.api.diarize import ASRDiarizationPipeline
+from src.api.apis import HuggingFaceAPI
 
 
 class AudioTranscriber:
     def __init__(self):
         self.title = "Transribe Audio KeyNotes ⚡️"
         self.description = """
-        The system can transcribe audio to text and extract keynotes from the audio. The system uses the Whisper medium model by OpenAI and speaker diarization model by pyannote.
+        The system can transcribe audio to text and extract keynotes from the audio. The system uses the Whisper medium model by OpenAI, Speaker Diarization model by pyannote and Falcon-7b-instruct LLM model by tiiuae.
         """
-        self.article = "Whisper medium model by OpenAI. Speaker diarization model by pyannote. 🚀"
+        self.article = "Whisper medium model by OpenAI. Speaker diarization model by pyannote. Falcon-7b-instruct model by tiiuae. 🚀"
         self.diarizer = ASRDiarizationPipeline.from_pretrained(device="cuda")
+        self.huggingface_api = HuggingFaceAPI()
+
 
     @staticmethod
     def format_dialogue(dialogue):
@@ -20,15 +23,26 @@ class AudioTranscriber:
             formatted_dialogue += f"{speaker}: {text}\n"
         return formatted_dialogue.strip()
 
+
     def transcribe(self, audio, task, group_by_speaker):
         if audio is None:
             return "No audio detected. Please try again."
+        
+        result = self.diarizer(audio, group_by_speaker=group_by_speaker)
+        dialogue = self.format_dialogue(result)
         if task == "transcribe":
-            result = self.diarizer(audio, group_by_speaker=group_by_speaker)
-            dialogue = self.format_dialogue(result) 
             return dialogue
+        
+        elif task == "keynote":
+            result = self.huggingface_api.get_instruct_summary(dialogue)
+            return result
+
 
     def create_interface(self, source, label):
+        examples = [
+        ["src/storage/audios/test.wav"],
+        ["src/storage/audios/test1.wav"]
+    ]
         return gr.Interface(
             fn=self.transcribe,
             inputs=[
@@ -43,7 +57,9 @@ class AudioTranscriber:
             title=self.title,
             description=self.description,
             article=self.article,
+            examples=examples,
         )
+
 
     def launch(self):
         microphone = self.create_interface("microphone", None)
