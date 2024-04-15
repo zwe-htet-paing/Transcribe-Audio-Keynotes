@@ -8,8 +8,10 @@ from torchaudio import functional as F
 from transformers import pipeline
 from transformers.pipelines.audio_utils import ffmpeg_read
 
-from dotenv import dotenv_values
+import warnings
+warnings.filterwarnings("ignore")
 
+from dotenv import dotenv_values
 # Load environment variables from .env file
 env_vars = dotenv_values(".env")
 HF_TOKEN = env_vars.get("HF_TOKEN")
@@ -17,14 +19,14 @@ HF_TOKEN = env_vars.get("HF_TOKEN")
 from huggingface_hub import login
 login(token = HF_TOKEN)
 
-class SpeakerDiarizationPipeline:
+class ASRDiarizationPipeline:
     def __init__(self, asr_pipeline, diarization_pipeline):
         self.asr_pipeline = asr_pipeline
         self.sampling_rate = self.asr_pipeline.feature_extractor.sampling_rate
 
         self.diarization_pipeline = diarization_pipeline
 
-    
+
     @classmethod
     def from_pretrained(
         cls,
@@ -32,28 +34,30 @@ class SpeakerDiarizationPipeline:
         diarization_model = "pyannote/speaker-diarization-3.0",
         chunk_length_s = 30,
         use_auth_token = True,
-
+        device = "cuda"
     ):
         asr_pipeline = pipeline(
           "automatic-speech-recognition",
           model=asr_model,
           chunk_length_s=chunk_length_s,
+          device=f"{device}:0",
           token=use_auth_token,
         )
         diarization_pipeline = Pipeline.from_pretrained(diarization_model, use_auth_token=use_auth_token)
+        diarization_pipeline.to(torch.device(device))
 
         return cls(asr_pipeline, diarization_pipeline)
 
-    def postprocess_diarization(self, diarization):
+
+    def postprocess_diarization(self, diarization_result):
         segments = []
-        for segment, track, label in diarization.itertracks(yield_label=True):
+        for segment, track, label in diarization_result.itertracks(yield_label=True):
             segments.append({'segment': {'start': segment.start, 'end': segment.end},
                             'track': track,
                             'label': label})
 
         new_segments = []
         prev_segment = cur_segment = segments[0]
-
         for i in range(1, len(segments)):
             cur_segment = segments[i]
 
@@ -78,23 +82,21 @@ class SpeakerDiarizationPipeline:
 
         return new_segments
     
-    def merge_trancription(self, new_segments, asr_out, group_by_speaker=True):
+
+    def merge_trancription(self, segments, asr_out, group_by_speaker=True):
         transcript = asr_out["chunks"]
 
         # get the end timestamps for each chunk from the ASR output
         end_timestamps = np.array([chunk["timestamp"][-1] for chunk in transcript])
-        # print(end_timestamps)
+
         segmented_preds = []
         # align the diarizer timestamps and the ASR timestamps
-        for segment in new_segments:
+        for segment in segments:
             # get the diarizer end timestamp
             end_time = segment["segment"]["end"]
-            # print(end_time)
-            # print(np.abs(end_timestamps - end_time))
+            
             # find the ASR end timestamp that is closest to the diarizer's end timestamp and cut the transcript to here
             upto_idx = np.argmin(np.abs(end_timestamps - end_time))
-            print(upto_idx)
-
 
             if group_by_speaker:
                 segmented_preds.append(
@@ -112,9 +114,13 @@ class SpeakerDiarizationPipeline:
             transcript = transcript[upto_idx + 1 :]
             end_timestamps = end_timestamps[upto_idx + 1 :]
 
+            if len(end_timestamps) == 0:
+                break
+
         return segmented_preds
 
-    def __call__(self, inputs="./test.wav", group_by_speaker=True):
+
+    def __call__(self, inputs, group_by_speaker=True):
 
         inputs, diarizer_inputs = self.preprocess(inputs)
 
@@ -127,9 +133,7 @@ class SpeakerDiarizationPipeline:
             {"array": inputs, "sampling_rate": self.sampling_rate},
             return_timestamps=True,
         )
-        
-        segmented_preds = self.merge_trancription(new_segments, asr_out)
-        # print(segmented_preds)
+        segmented_preds = self.merge_trancription(new_segments, asr_out, group_by_speaker=group_by_speaker)
         return segmented_preds
       
 
