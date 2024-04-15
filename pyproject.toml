@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "transcribe-audio-keynotes"
+version = "0.1.0"
+description = ""
+authors = ["zwe-htet-paing <zwehtetpaing.works@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+transformers = "^4.39.3"
+pyannote-audio = "^3.1.1"
+torchaudio = "^2.2.2"
+torchvision = "^0.17.2"
+onnxruntime = "^1.17.3"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
