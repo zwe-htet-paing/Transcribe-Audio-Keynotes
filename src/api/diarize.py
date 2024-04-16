@@ -140,6 +140,7 @@ class ASRDiarizationPipeline:
             return_timestamps=True,
         )
         segmented_preds = self.merge_trancription(new_segments, asr_out, group_by_speaker=group_by_speaker)
+        
         return segmented_preds
       
 
