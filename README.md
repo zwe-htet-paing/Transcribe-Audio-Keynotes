@@ -2,6 +2,34 @@
 
 This project aims to transcribe audio files using the Whisper model, perform speaker diarization using PyAnnot, and summarize the transcribed text using Falcon-7B-Instruct and prompt-engineering techniques.
 
+## Demo
+<!-- ![Transcribe](assets/gif/output.gif) 
+![Keynote](assets/gif/keynotes.gif) -->
+
+<!-- <div align="center">
+  <img src="assets/gif/output.gif" alt="Transcribe">
+  <p>Figure: Transcribe with diarization</p>
+</div>
+
+<div align="center">
+  <img src="assets/gif/keynotes.gif" alt="Transcribe">
+  <p>Figure: Summarization</p>
+</div> -->
+
+<div style="display: flex;">
+    <div style="flex: 1; margin-right: 10px;">
+        <img src="assets/gif/transcribe.gif" alt="Image 1" style="max-width: 100%;">
+        <p style="text-align: center;">Figure: Transcribe with diarization</p>
+    </div>
+    <div style="flex: 1; margin-left: 10px;">
+        <img src="assets/gif/keynotes.gif" alt="Image 2" style="max-width: 100%;">
+        <p style="text-align: center;">Figure: Summarization</p>
+    </div>
+</div>
+
+
+
+
 # Installation
 
 ## Requirements
@@ -50,17 +78,16 @@ To run the Gradio demo, follow these steps:
 
 2. **Accessing the Demo**: Once the demo is running, you can access it locally using the following URL: `http://127.0.0.1:7860`
 
-### Example
 
-<div align="center">
-  <img src="src/storage/images/transcribe.png" alt="Transcribe">
+<!-- <div align="center">
+  <img src="assets/images/transcribe.png" alt="Transcribe">
   <p>Figure: Transcribe with diarization</p>
 </div>
 
 <div align="center">
-  <img src="src/storage/images/keynote.png" alt="Transcribe">
+  <img src="assets/images/keynote.png" alt="Transcribe">
   <p>Figure: Summarization</p>
-</div>
+</div> -->
 
 
 ## Acknowledgments
