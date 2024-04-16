@@ -6,29 +6,15 @@ This project aims to transcribe audio files using the Whisper model, perform spe
 <!-- ![Transcribe](assets/gif/output.gif) 
 ![Keynote](assets/gif/keynotes.gif) -->
 
-<!-- <div align="center">
-  <img src="assets/gif/output.gif" alt="Transcribe">
+<div align="center">
+  <img src="assets/gif/transcribe.gif" alt="Transcribe">
   <p>Figure: Transcribe with diarization</p>
 </div>
 
 <div align="center">
   <img src="assets/gif/keynotes.gif" alt="Transcribe">
   <p>Figure: Summarization</p>
-</div> -->
-
-<div style="display: flex;">
-    <div style="flex: 1; margin-right: 10px;">
-        <img src="assets/gif/transcribe.gif" alt="Image 1" style="max-width: 100%;">
-        <p style="text-align: center;">Figure: Transcribe with diarization</p>
-    </div>
-    <div style="flex: 1; margin-left: 10px;">
-        <img src="assets/gif/keynotes.gif" alt="Image 2" style="max-width: 100%;">
-        <p style="text-align: center;">Figure: Summarization</p>
-    </div>
 </div>
-
-
-
 
 # Installation
 
