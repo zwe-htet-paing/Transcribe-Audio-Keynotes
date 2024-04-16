@@ -16,6 +16,7 @@ class HuggingFaceAPI:
         self.TRANSCRIPTION_URL = "https://api-inference.huggingface.co/models/openai/whisper-large-v3"
         self.SUMMARIZATION_URL = "https://api-inference.huggingface.co/models/Falconsai/text_summarization"
         self.FALCON_INSTRUCT_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
+        self.FLAN_T5 = "https://api-inference.huggingface.co/models/google/flan-t5-large"
 
 
     def get_transcription(self, filename):
@@ -47,8 +48,9 @@ class HuggingFaceAPI:
     
     def get_instruct_summary(self, text):
         prompt = f"""
-        Summarize the following dialogue delimited by triple backquotes:
-        ```{text}```
+        Generate summary of the following conversation:
+        
+        {text}
 
         Summary:
         """

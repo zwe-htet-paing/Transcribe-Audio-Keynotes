@@ -40,8 +40,8 @@ class AudioTranscriber:
 
     def create_interface(self, source, label):
         examples = [
-        ["src/storage/audios/test.wav"],
-        ["src/storage/audios/test1.wav"]
+        ["assets/audios/test.wav"],
+        ["assets/audios/test1.wav"]
     ]
         return gr.Interface(
             fn=self.transcribe,
